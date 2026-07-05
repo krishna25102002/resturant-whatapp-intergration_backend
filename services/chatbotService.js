@@ -8,7 +8,7 @@ exports.processMessage = async (phone, message) => {
 
         return await whatsappService.sendTextMessage(
             phone,
-`👋 Welcome to YatraVandi Restaurant
+`👋 Welcome to Restaurant
 
 Choose your category
 
