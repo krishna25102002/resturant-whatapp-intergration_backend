@@ -10,6 +10,11 @@ exports.verifyWebhook = (req, res) => {
     const token = req.query["hub.verify_token"];
     const challenge = req.query["hub.challenge"];
 
+    console.log("Mode:", mode);
+    console.log("Received Token:", token);
+    console.log("ENV Token:", process.env.VERIFY_TOKEN);
+    console.log("Challenge:", challenge);
+
     if (
         mode === "subscribe" &&
         token === process.env.VERIFY_TOKEN
@@ -21,7 +26,6 @@ exports.verifyWebhook = (req, res) => {
     console.log("❌ Webhook Verification Failed");
     return res.sendStatus(403);
 };
-
 
 // ===============================
 // POST /webhook
