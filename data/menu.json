@@ -1,0 +1,27 @@
+{
+  "veg":[
+    {
+      "id":1,
+      "name":"Paneer Butter Masala",
+      "price":220
+    },
+    {
+      "id":2,
+      "name":"Veg Biryani",
+      "price":180
+    }
+  ],
+
+  "nonveg":[
+    {
+      "id":1,
+      "name":"Chicken Biryani",
+      "price":250
+    },
+    {
+      "id":2,
+      "name":"Chicken 65",
+      "price":190
+    }
+  ]
+}
