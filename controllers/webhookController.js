@@ -31,7 +31,7 @@ exports.receiveWebhook = async (req, res) => {
         body.entry[0].changes &&
         body.entry[0].changes[0].value.messages
     ) {
-
+        console.log(JSON.stringify(req.body, null, 2));
         const phone =
             body.entry[0].changes[0].value.messages[0].from;
 
