@@ -4,8 +4,9 @@ exports.sendTextMessage = async (phone, message) => {
 
     try {
 
-        const url = `https://graph.facebook.com/v23.0/${process.env.PHONE_NUMBER_ID}/messages`;
+        console.log("➡️ Sending Message...");
 
+        const url =`https://graph.facebook.com/${process.env.GRAPH_API_VERSION}/${process.env.PHONE_NUMBER_ID}/messages`;
         const response = await axios.post(
             url,
             {
@@ -31,14 +32,23 @@ exports.sendTextMessage = async (phone, message) => {
 
     } catch (error) {
 
-        console.log("❌ Error Sending Message");
+    console.log("========== META ERROR ==========");
 
-        if (error.response) {
-            console.log(error.response.data);
-        } else {
-            console.log(error.message);
-        }
+    console.log("Status:",
+        error.response?.status);
 
-    }
+    console.log("Headers:",
+        error.response?.headers);
+
+    console.log("Data:",
+        JSON.stringify(
+            error.response?.data,
+            null,
+            2
+        ));
+
+    console.log(error.message);
+
+}
 
 };
