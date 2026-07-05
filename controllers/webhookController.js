@@ -61,15 +61,18 @@ exports.receiveWebhook = async (req, res) => {
         }
 
         const incoming = value.messages[0];
+        console.log("Incoming:", JSON.stringify(incoming, null, 2));
+        console.log("Type:", incoming.type);
+        console.log("Text:", incoming.text);
 
         console.log("Incoming Message Object:");
         console.log(JSON.stringify(incoming, null, 2));
 
         // Ignore non-text messages
-        if (incoming.type !== "text") {
-            console.log(`ℹ️ Ignoring ${incoming.type} message.`);
-            return res.sendStatus(200);
-        }
+      if (!incoming.text) {
+    console.log("ℹ️ Not a text message.");
+    return res.sendStatus(200);
+}
 
         const phone = incoming.from;
         const message = incoming.text.body;
@@ -96,7 +99,6 @@ exports.receiveWebhook = async (req, res) => {
     }
 
 };
-// exports.receiveWebhook = async (req, res) => {
 
 //     try {
 
