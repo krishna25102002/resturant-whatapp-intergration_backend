@@ -1,6 +1,9 @@
 const chatbotService = require("../services/chatbotService");
 
+// ===============================
 // GET /webhook
+// Meta Webhook Verification
+// ===============================
 exports.verifyWebhook = (req, res) => {
 
     const mode = req.query["hub.mode"];
@@ -15,79 +18,81 @@ exports.verifyWebhook = (req, res) => {
         return res.status(200).send(challenge);
     }
 
+    console.log("❌ Webhook Verification Failed");
     return res.sendStatus(403);
 };
 
 
+// ===============================
 // POST /webhook
+// Receive WhatsApp Messages
+// ===============================
 exports.receiveWebhook = async (req, res) => {
 
-    console.log("📩 Incoming Webhook");
+    try {
 
-    const body = req.body;
+        console.log("\n==============================");
+        console.log("📩 Incoming Webhook");
+        console.log("==============================");
 
-    if (
-        body.entry &&
-        body.entry[0].changes &&
-        body.entry[0].changes[0].value.messages
-    ) {
-        console.log(JSON.stringify(req.body, null, 2));
-        const phone =
-            body.entry[0].changes[0].value.messages[0].from;
+        const body = req.body;
 
-        const message =
-            body.entry[0].changes[0].value.messages[0].text.body;
+        console.log("Full Payload:");
+        console.log(JSON.stringify(body, null, 2));
 
+        const value = body.entry?.[0]?.changes?.[0]?.value;
+
+        if (!value) {
+            console.log("❌ No value object found.");
+            return res.sendStatus(200);
+        }
+
+        // Ignore delivery/read/status updates
+        if (value.statuses) {
+            console.log("ℹ️ Status Update Received");
+            console.log(JSON.stringify(value.statuses, null, 2));
+            return res.sendStatus(200);
+        }
+
+        // Ignore if no messages
+        if (!value.messages) {
+            console.log("ℹ️ No incoming messages found.");
+            return res.sendStatus(200);
+        }
+
+        const incoming = value.messages[0];
+
+        console.log("Incoming Message Object:");
+        console.log(JSON.stringify(incoming, null, 2));
+
+        // Ignore non-text messages
+        if (incoming.type !== "text") {
+            console.log(`ℹ️ Ignoring ${incoming.type} message.`);
+            return res.sendStatus(200);
+        }
+
+        const phone = incoming.from;
+        const message = incoming.text.body;
+
+        console.log("--------------------------------");
         console.log("Customer :", phone);
         console.log("Message  :", message);
+        console.log("--------------------------------");
+
+        console.log("➡️ Calling chatbotService...");
 
         await chatbotService.processMessage(phone, message);
 
+        console.log("✅ chatbotService completed.");
+
+        return res.sendStatus(200);
+
+    } catch (error) {
+
+        console.log("❌ Webhook Error");
+        console.error(error);
+
+        return res.sendStatus(500);
     }
 
-    res.sendStatus(200);
-
 };
-// const chatbotService = require("../services/chatbotService");
-
-// exports.verifyWebhook = (req, res) => {
-
-//     const mode = req.query["hub.mode"];
-//     const token = req.query["hub.verify_token"];
-//     const challenge = req.query["hub.challenge"];
-
-//     if (
-//         mode === "subscribe" &&
-//         token === process.env.VERIFY_TOKEN
-//     ) {
-//         console.log("Webhook Verified");
-//         return res.status(200).send(challenge);
-//     }
-
-//     return res.sendStatus(403);
-// };
-
-
-// exports.receiveWebhook = async (req, res) => {
-//     try {
-//         console.log("Incoming Webhook");
-//         console.log(JSON.stringify(req.body, null, 2));
-
-//         const entry = req.body.entry?.[0];
-//         const changes = entry?.changes?.[0];
-//         const value = changes?.value;
-
-//         // Check if it's a message and it's a text message
-//         if (value?.messages?.[0]?.type === "text") {
-//             const phone = value.messages[0].from;
-//             const message = value.messages[0].text.body;
-
-//             await chatbotService.processMessage(phone, message);
-//         }
-
-//         res.sendStatus(200);
-//     } catch (error) { 
-//         console.error("Error processing webhook:", error);
-//         res.sendStatus(500);
-//     }
-// };
