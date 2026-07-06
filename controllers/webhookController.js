@@ -81,6 +81,7 @@ exports.receiveWebhook = async (req, res) => {
         const phone = incoming.from;
         const message = incoming.text.body;
 
+        console.log("REAL PHONE:", incoming.from);
         console.log("--------------------------------");
         console.log("Customer :", phone);
         console.log("Message  :", message);
