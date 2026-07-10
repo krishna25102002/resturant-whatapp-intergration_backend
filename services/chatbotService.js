@@ -1,3 +1,5 @@
+const whatsappService = require("./whatsappService");
+
 exports.processMessage = async (phone, message) => {
 
     message = message.trim().toLowerCase();
